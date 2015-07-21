@@ -62,8 +62,8 @@ $(function() {
         contentType: 'application/json',
         data: { order: '-createdAt'},
         success: function(data) {
+          data = JSON.parse(data);
           console.log(data);
-          console.log('chatterbox: Messages fetched');
 
           // Don't bother if we have nothing to work with
           if (!data.results || !data.results.length) { return; }
@@ -161,9 +161,9 @@ $(function() {
 
         var $message = $('<br><span/>');
         $message.text(data.text).appendTo($chat);
-
+        
         // Add the message to the UI
-        app.$chats.append($chat);
+        app.$chats.prepend($chat);
       }
     },
     addFriend: function(evt) {

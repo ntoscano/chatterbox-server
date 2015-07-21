@@ -11,16 +11,27 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
+// The outgoing status.
+var statusCode = 200;
 
-var serverStorage = [];
+var path = require('path');
+
+var serverStorage = {results: []};
+var objCount = 0;
 
 var requestHandler = function(request, response) {
   if(request.method === "POST"){
+    statusCode = 201;
     request.on('data', function(funk){
-      console.log(funk.toString());
+      
+      var stringyData = funk.toString();
+      var item = JSON.parse(stringyData);
+      // var thisPath = path.join('/classes', item.roomname)
+      item.date = new Date();
+      item.objectId = objCount;
+      objCount++;
+      serverStorage.results.push(item);
     })
-    // console.log(request.data);
-    console.log("this is working")
   }
   // console.log("------------------------------------------------------------------------", serverStorage);
 
@@ -43,8 +54,6 @@ var requestHandler = function(request, response) {
 
 
 
-  // The outgoing status.
-  var statusCode = 200;
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
@@ -67,7 +76,7 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end("asdf", serverStorage);
+  response.end(JSON.stringify(serverStorage));
 };
 
 exports.requestHandler = requestHandler;
