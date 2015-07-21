@@ -12,7 +12,19 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
+var serverStorage = [];
+
 var requestHandler = function(request, response) {
+  if(request.method === "POST"){
+    request.on('data', function(funk){
+      console.log(funk.toString());
+    })
+    // console.log(request.data);
+    console.log("this is working")
+  }
+  // console.log("------------------------------------------------------------------------", serverStorage);
+
+  // console.log(serverStorage);
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -28,6 +40,8 @@ var requestHandler = function(request, response) {
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
   console.log("Serving request type " + request.method + " for url " + request.url);
+
+
 
   // The outgoing status.
   var statusCode = 200;
@@ -49,11 +63,14 @@ var requestHandler = function(request, response) {
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
   // up in the browser.
+
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end("Hello, World!");
+  response.end("asdf", serverStorage);
 };
+
+exports.requestHandler = requestHandler;
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
 // This code allows this server to talk to websites that
