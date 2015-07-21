@@ -12,27 +12,43 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 // The outgoing status.
-var statusCode = 200;
+exports = module.exports = {};
 
-var path = require('path');
-
-var serverStorage = {results: []};
+var serverStorage = {
+  results: [],
+  urls: ['http://127.0.0.1:3000/', '/log', '/classes/messages', '/?order=-createdAt', '/classes/room1', '/classes/room']
+};
 var objCount = 0;
 
 var requestHandler = function(request, response) {
+  var statusCode = 200;
   if(request.method === "POST"){
+    if(serverStorage.urls.indexOf(request.url) === -1){
+      serverStorage.urls.push(request.url);
+    }
     statusCode = 201;
     request.on('data', function(funk){
-      
       var stringyData = funk.toString();
       var item = JSON.parse(stringyData);
       // var thisPath = path.join('/classes', item.roomname)
       item.date = new Date();
       item.objectId = objCount;
+      // item.message = item['text'];
+      console.log(JSON.stringify(item));
       objCount++;
       serverStorage.results.push(item);
     })
+
   }
+
+  console.log(request.url + " <----- this is the request URL")
+
+  if(request.method === "GET"){
+    if(serverStorage.urls.indexOf(request.url) === -1){
+      statusCode = 404;
+    }
+  }
+
   // console.log("------------------------------------------------------------------------", serverStorage);
 
   // console.log(serverStorage);
@@ -75,7 +91,8 @@ var requestHandler = function(request, response) {
 
   //
   // Calling .end "flushes" the response's internal buffer, forcing
-  // node to actually send all the data over to the client.
+  // node to actually send¬ all the data over to the client.
+  console.log(statusCode);
   response.end(JSON.stringify(serverStorage));
 };
 
